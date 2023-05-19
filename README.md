@@ -8,9 +8,9 @@ Totalmente implementado
 
 # Requisitos previos:
 
-Java Development Kit (JDK) 17 instalado en tu sistema.
-Maven instalado en tu sistema.
-Acceso y credenciales para AWS (para la conexión a RDS y la configuración de la función Lambda y API Gateway).
+1. Java Development Kit (JDK) 17 instalado en tu sistema.
+2. Maven instalado en tu sistema.
+3. Acceso y credenciales para AWS (para la conexión a RDS y la configuración de la función Lambda y API Gateway).
 
 # Pasos de instalación:
 
