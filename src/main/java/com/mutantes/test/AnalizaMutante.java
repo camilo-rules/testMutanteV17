@@ -74,7 +74,7 @@ public class AnalizaMutante {
      * @param sequence la secuencia de ADN a verificar.
      * @return true si la secuencia de ADN es mutante, false en caso contrario.
      */
-    private static boolean validarSecuencia(String sequence) {
+    protected static boolean validarSecuencia(String sequence) {
         int count = 0;
         //Se declara una variable prevChar de tipo char e inicializada con el carácter nulo ('\0').
         // Esta variable almacena el carácter anterior mientras se recorre la secuencia.

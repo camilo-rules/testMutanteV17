@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.google.gson.Gson;
 
-public class MutanteHandler implements RequestHandler<String[], ApiResponse> {
+public class MutanteHandler implements MutanteHandlerInterface {
     private DBConnection dbConnection;
 
     public MutanteHandler() {
@@ -23,6 +22,7 @@ public class MutanteHandler implements RequestHandler<String[], ApiResponse> {
             // Convierte el JSON a un objeto Java usando Gson
             Gson gson = new Gson();
             String requestBody = gson.toJson(dna);
+            System.out.println("requestBody: " + requestBody);
             String[] dnaArray = gson.fromJson(requestBody, String[].class);
 
             // Verifica si la secuencia de ADN contiene caracteres no permitidos
@@ -46,29 +46,16 @@ public class MutanteHandler implements RequestHandler<String[], ApiResponse> {
             }
 
             // Realiza la inserción en la base de datos RDS
-            try (Connection connection = dbConnection.getConnection()) {
-                // Verifica si el registro de ADN ya existe
-                String selectQuery = "SELECT * FROM adn_resultado WHERE adn = ?";
-                try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
-                    selectStatement.setString(1, requestBody);
-                    try (ResultSet resultSet = selectStatement.executeQuery()) {
-                        if (!resultSet.next()) {
-                            // El registro de ADN no existe, se realiza la inserción
-                            String insertQuery = "INSERT INTO adn_resultado (adn, es_mutante) VALUES (?, ?)";
-                            try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
-                                insertStatement.setString(1, requestBody);
-                                insertStatement.setBoolean(2, esMutante);
-                                insertStatement.executeUpdate();
-                            }
-                        }
-                    }
+            try (Connection connection = getDatabaseConnection()) {
+                if (!isADNRecordExists(connection, requestBody)) {
+                    insertADNRecord(connection, requestBody, esMutante);
                 }
             } catch (SQLException e) {
                 // Manejar errores de conexión o inserción en la base de datos
                 e.printStackTrace();
                 return new ApiResponse(403, "Forbidden");
             } finally {
-                dbConnection.closeConnection();
+                closeDatabaseConnection();
             }
 
             // Crea una instancia de ApiResponse con el statusCode y el response
@@ -82,7 +69,34 @@ public class MutanteHandler implements RequestHandler<String[], ApiResponse> {
         }
     }
 
-    private boolean validarSecuenciaADN(String[] dna) {
+    protected Connection getDatabaseConnection() throws SQLException {
+        return dbConnection.getConnection();
+    }
+
+    protected void closeDatabaseConnection() {
+        dbConnection.closeConnection();
+    }
+
+    protected boolean isADNRecordExists(Connection connection, String adn) throws SQLException {
+        String selectQuery = "SELECT * FROM adn_resultado WHERE adn = ?";
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
+            selectStatement.setString(1, adn);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    protected void insertADNRecord(Connection connection, String adn, boolean esMutante) throws SQLException {
+        String insertQuery = "INSERT INTO adn_resultado (adn, es_mutante) VALUES (?, ?)";
+        try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+            insertStatement.setString(1, adn);
+            insertStatement.setBoolean(2, esMutante);
+            insertStatement.executeUpdate();
+        }
+    }
+
+    protected boolean validarSecuenciaADN(String[] dna) {
         Pattern pattern = Pattern.compile("^[ATCG]+$");
         for (String sequence : dna) {
             if (!pattern.matcher(sequence).matches()) {
