@@ -46,15 +46,19 @@ URL statusMutante: https://eoa0h868wd.execute-api.us-east-1.amazonaws.com/testin
 # Documentación de API
 
 1. Recurso '/pruebaMutante' (Método POST):
+  
   Descripción: Endpoint utilizado para probar si una cadena de ADN corresponde a un mutante o no.
+  
   Parámetros de entrada:
     Array de Strings: Un array que contiene la secuencia de ADN a analizar.
-  Ejemplo de solicitud:
+ 
+ Ejemplo de solicitud:
     POST /pruebaMutante
       Content-Type: application/json
       {
         "dna": ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
       }
+  
   Ejemplo de respuesta (para un ADN mutante):
      HTTP/1.1 200 OK
      Content-Type: application/json
@@ -64,10 +68,14 @@ URL statusMutante: https://eoa0h868wd.execute-api.us-east-1.amazonaws.com/testin
       }
       
 2. Recurso '/statusMutante' (Método GET):
+   
    Descripción: Endpoint utilizado para obtener el estado actual del análisis de ADN.
-   Parámetros de entrada: No requiere parámetros.
+  
+  Parámetros de entrada: No requiere parámetros.
+   
    Ejemplo de solicitud:
      GET /statusMutante
+   
    Ejemplo de respuesta:
     HTTP/1.1 200 OK
     Content-Type: application/json
@@ -77,6 +85,8 @@ URL statusMutante: https://eoa0h868wd.execute-api.us-east-1.amazonaws.com/testin
       }
   
  3. Header requerido:
+    
     Content-Type: application/json
+    
     Descripción: Encabezado que indica el tipo de contenido del cuerpo de la solicitud o respuesta, que en este caso debe   ser JSON.
     
