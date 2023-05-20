@@ -90,3 +90,6 @@ URL statusMutante: https://eoa0h868wd.execute-api.us-east-1.amazonaws.com/testin
     
     Descripción: Encabezado que indica el tipo de contenido del cuerpo de la solicitud o respuesta, que en este caso debe   ser JSON.
     
+# Nota:
+Para ejecutar las API´s y validar su funcionamiento se debe utilizar una herramienta de diseño e implementación de API´s como Postman, Insomnia, SoapUI, entre otras, y configurar el header y cuerpo de mensaje.
+    
